@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ShoppingList.API.Core;
+using ShoppingList.API.Db;
+using ShoppingList.API.Models;
 
 namespace ShoppingList.API
 {
@@ -10,6 +13,9 @@ namespace ShoppingList.API
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
+            services.AddDbContext<ShoppingListContext>(a => a.UseInMemoryDatabase());
+            services.AddSingleton(typeof(IRepository<Drink, string>), typeof(Repository<Drink, string>));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -20,11 +26,7 @@ namespace ShoppingList.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.UseMvc();
         }
     }
 }
