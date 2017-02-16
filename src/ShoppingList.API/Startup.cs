@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,9 @@ namespace ShoppingList.API
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                .AddMvcOptions(
+                    a => a.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));
             services.AddDbContext<ShoppingListContext>(a => a.UseInMemoryDatabase());
             services.AddScoped(typeof(IRepository<Drink, string>), typeof(Repository<Drink, string>));
         }

@@ -67,14 +67,16 @@ namespace ShoppingList.Tests.Controllers
 
             drinkRepository.Received(1).GetAll();
             result.Should().BeOfType<JsonResult>();
-            result.StatusCode.ShouldBeEquivalentTo(200);
-            result.Value.Should().BeOfType<List<Drink>>();
+            var jsonResult = (JsonResult)result;
+            jsonResult.StatusCode.ShouldBeEquivalentTo(200);
+            jsonResult.Value.Should().BeOfType<List<Drink>>();
         }
 
         [Test]
         public void update_a_drink()
         {
             Drink aDrink = new Drink {Name = aDrinkName, Quantity = aQuantity };
+            drinkRepository.Get(aDrinkName).Returns(aDrink);
 
             var result = controller.Update(aDrink);
 

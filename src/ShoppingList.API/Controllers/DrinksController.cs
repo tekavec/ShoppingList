@@ -26,9 +26,9 @@ namespace ShoppingList.API.Controllers
         }
 
         [HttpGet]
-        public JsonResult Get()
+        public IActionResult Get()
         {
-            return new JsonResult(drinkRepository.GetAll()) { StatusCode = 200 };
+            return Ok(drinkRepository.GetAll());
         }
 
         [HttpGet("{id}", Name="GetDrink")]
@@ -39,7 +39,7 @@ namespace ShoppingList.API.Controllers
                 ModelState.AddModelError("Description", $"No drink with the name '{id}'.");
             if (!ModelState.IsValid)
                 return NotFound(ModelState);
-            return new JsonResult(drink) {StatusCode = 200};
+            return Ok(drink);
         }
 
         [HttpPut]
