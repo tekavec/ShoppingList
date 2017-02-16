@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingList.API.Core;
 using ShoppingList.API.Models;
 
 namespace ShoppingList.API.Controllers
 {
     [Route("api/drinks")]
-    public class DrinksController
+    public class DrinksController : Controller
     {
         private readonly IRepository<Drink, string> drinkRepository;
 
@@ -18,6 +17,10 @@ namespace ShoppingList.API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Drink drink)
         {
+            if (drinkRepository.Get(drink.Name) != null)
+                ModelState.AddModelError("Description", "Drink with the same name already exist.");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             drinkRepository.Add(drink);
             return new CreatedAtRouteResult("GetDrink", new {id = drink.Name}, drink);
         }
@@ -29,9 +32,23 @@ namespace ShoppingList.API.Controllers
         }
 
         [HttpGet("{id}", Name="GetDrink")]
-        public JsonResult Get(string id)
+        public IActionResult Get(string id)
         {
-            return new JsonResult(drinkRepository.Get(id)) {StatusCode = 200};
+            var drink = drinkRepository.Get(id);
+            if (drink == null)
+                ModelState.AddModelError("Description", $"No drink with the name '{id}'.");
+            if (!ModelState.IsValid)
+                return NotFound(ModelState);
+            return new JsonResult(drink) {StatusCode = 200};
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] Drink drink)
+        {
+            if (drink == null || drinkRepository.Get(drink.Name) == null)
+                return BadRequest();
+            drinkRepository.Update(drink.Name, drink);
+            return NoContent();
         }
     }
 }

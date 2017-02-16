@@ -15,7 +15,7 @@ namespace ShoppingList.API
         {
             services.AddMvc();
             services.AddDbContext<ShoppingListContext>(a => a.UseInMemoryDatabase());
-            services.AddSingleton(typeof(IRepository<Drink, string>), typeof(Repository<Drink, string>));
+            services.AddScoped(typeof(IRepository<Drink, string>), typeof(Repository<Drink, string>));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

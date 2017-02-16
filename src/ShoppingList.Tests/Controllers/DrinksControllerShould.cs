@@ -51,8 +51,9 @@ namespace ShoppingList.Tests.Controllers
 
             drinkRepository.Received(1).Get(aDrinkName);
             result.Should().BeOfType<JsonResult>();
-            result.StatusCode.ShouldBeEquivalentTo(200);
-            result.Value.Should().BeOfType<Drink>();
+            var jsonResult = (JsonResult) result;
+            jsonResult.StatusCode.ShouldBeEquivalentTo(200);
+            jsonResult.Value.Should().BeOfType<Drink>();
         }
 
         [Test]
@@ -68,6 +69,30 @@ namespace ShoppingList.Tests.Controllers
             result.Should().BeOfType<JsonResult>();
             result.StatusCode.ShouldBeEquivalentTo(200);
             result.Value.Should().BeOfType<List<Drink>>();
+        }
+
+        [Test]
+        public void update_a_drink()
+        {
+            Drink aDrink = new Drink {Name = aDrinkName, Quantity = aQuantity };
+
+            var result = controller.Update(aDrink);
+
+            drinkRepository.Received(1).Update(aDrinkName, aDrink);
+            result.Should().BeOfType<NoContentResult>();
+            ((NoContentResult)result).StatusCode.ShouldBeEquivalentTo(204);
+        }
+
+        [Test]
+        public void not_update_non_existing_drink_and_return_bad_request()
+        {
+            Drink aDrink = new Drink {Name = aDrinkName, Quantity = aQuantity};
+
+            var result = controller.Update(aDrink);
+
+            drinkRepository.Received(0).Update(aDrinkName, aDrink);
+            result.Should().BeOfType<BadRequestResult>();
+            ((BadRequestResult)result).StatusCode.ShouldBeEquivalentTo(400);
         }
     }
 }

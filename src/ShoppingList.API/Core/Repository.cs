@@ -32,6 +32,13 @@ namespace ShoppingList.API.Core
             return dbSet.Find(id);
         }
 
+        public void Update(TKey id, T t)
+        {
+            var find = dbSet.Find(id);
+            dbContext.Entry(find).CurrentValues.SetValues(t);
+            Save();
+        }
+    
         private void Save()
         {
             dbContext.SaveChanges();

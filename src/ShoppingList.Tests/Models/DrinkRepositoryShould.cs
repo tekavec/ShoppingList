@@ -80,6 +80,16 @@ namespace ShoppingList.Tests.Models
             drinks.Count().ShouldBeEquivalentTo(2);
         }
 
+        [Test]
+        public void update_quantity_of_a_drink()
+        {
+            var drinkDto = new Drink { Name = aDrinkName, Quantity = aQuantity };
+            drinkRepository.Add(drinkDto);
+            drinkDto.Quantity++;
 
+            drinkRepository.Update(aDrinkName, drinkDto);
+
+            drinkRepository.Get(drinkDto.Name).Quantity.ShouldBeEquivalentTo(drinkDto.Quantity);
+        }
     }
 }
